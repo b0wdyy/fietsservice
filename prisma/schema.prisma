@@ -1,0 +1,29 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Invoice {
+    id              String   @id @default(cuid())
+    amount          Float
+    brand           String
+    type            String
+    dateOfPurchase  DateTime
+    purchaserName   String
+    deposit         Float
+    extraAgreements String
+    image           String
+    invoiceNumber   String
+    email           String
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    @@index([invoiceNumber], name: "invoiceNumber")
+    @@index([email], name: "email")
+    @@index([purchaserName], name: "purchaserName")
+    @@map("invoices")
+}
