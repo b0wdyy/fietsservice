@@ -1,8 +1,16 @@
-import { useForm } from 'react-hook-form'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form'
-import { z } from 'zod'
+import { invoiceSchema } from '@/lib/invoice.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { CalendarIcon } from '@radix-ui/react-icons'
+import { useSubmit } from '@remix-run/react'
+import { format } from 'date-fns'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { cn } from '../../lib/utils'
 import { Button } from '../ui/button'
+import { Calendar } from '../ui/calendar'
+import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form'
+import { Input } from '../ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import {
     Select,
     SelectContent,
@@ -12,40 +20,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../ui/select'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
-import { Calendar } from '../ui/calendar'
-import { format } from 'date-fns'
-import { CalendarIcon } from '@radix-ui/react-icons'
-import { cn } from '../../lib/utils'
-import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
-import { useSubmit } from '@remix-run/react'
-
-const formSchema = z.object({
-    amount: z.string().optional(),
-    deposit: z.string().optional(),
-    brand: z.string(),
-    type: z.string(),
-    dateOfPurchase: z.date(),
-    purchaserName: z.string(),
-    extraAgreements: z.string().optional(),
-    invoiceNumber: z.string(),
-    email: z.string().email(),
-    img: z.string(),
-})
 
 export const InvoiceForm = () => {
     const submit = useSubmit()
     const typeValues = [
+        'Elektrische fiets',
+        'Stadsfiets',
         'Koersfiets',
         'Mountainbike',
-        'Stadsfiets',
-        'Elektrische fiets',
         'Plooifiets',
         'Andere',
     ]
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof invoiceSchema>>({
+        resolver: zodResolver(invoiceSchema),
         defaultValues: {
             amount: '0',
             deposit: '0',
@@ -60,7 +48,7 @@ export const InvoiceForm = () => {
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: z.infer<typeof invoiceSchema>) {
         const formData = new FormData()
         for (const key in values) {
             if (Object.prototype.hasOwnProperty.call(values, key)) {

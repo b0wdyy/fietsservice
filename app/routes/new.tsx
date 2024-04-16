@@ -1,5 +1,7 @@
-import { MetaFunction, useActionData } from '@remix-run/react'
 import { InvoiceForm } from '@/components/main/invoice-form'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { uploadImage } from '@/lib/image.server'
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import {
     ActionFunctionArgs,
     UploadHandler,
@@ -8,8 +10,8 @@ import {
     json,
     unstable_parseMultipartFormData as parseMultipartFormData,
 } from '@remix-run/node'
+import { MetaFunction, useActionData } from '@remix-run/react'
 import { prisma } from 'app/db.server'
-import { uploadImage } from '@/lib/image.server'
 import type { UploadApiErrorResponse } from 'cloudinary'
 import { useEffect } from 'react'
 
@@ -78,8 +80,18 @@ export default function New() {
 
                 <InvoiceForm />
 
-                {data?.error && <p className="text-red-500">{data.error}</p>}
+                {data?.error ? <AlertDestructive message={data.error} /> : null}
             </div>
         </div>
+    )
+}
+
+export function AlertDestructive({ message }: { message: string }) {
+    return (
+        <Alert variant="destructive">
+            <ExclamationTriangleIcon className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{message}</AlertDescription>
+        </Alert>
     )
 }
