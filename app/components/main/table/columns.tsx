@@ -13,20 +13,12 @@ export const columns: ColumnDef<Invoice>[] = [
         header: "Bedrag"
     },
     {
-        accessorKey: "deposit",
-        header: "Voorschot"
-    },
-    {
         accessorKey: "brand",
         header: "Merk"
     },
     {
         accessorKey: "type",
         header: "Type"
-    },
-    {
-        accessorKey: "dateOfPurchase",
-        header: "Datum"
     },
     {
         accessorKey: "purchaserName",
