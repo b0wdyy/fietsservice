@@ -1,23 +1,27 @@
-import { LoaderFunctionArgs, redirect } from '@remix-run/node'
-import { destroySession, getSession } from '../sessions'
+import { LoaderFunctionArgs, json } from '@remix-run/node'
+import { requireUserId } from '../sessions'
+import { getInvoices } from '@/services/invoice.server'
+import { useLoaderData } from '@remix-run/react'
+import { DataTable } from '@/components/main/table/data-table'
+import { columns } from '@/components/main/table/columns'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    const session = await getSession(request.headers.get('Cookie'))
+    requireUserId(request, '/')
 
-    if (!session.has('userId')) {
-        return redirect('/login', {
-            headers: {
-                'Set-Cookie': await destroySession(session),
-            },
-        })
-    }
+    const invoices = await getInvoices()
 
-    return null
+    return json({
+        invoices
+    })
 }
 export default function Dashboard() {
+    const { invoices } = useLoaderData<typeof loader>()
+
     return (
         <div>
             <h1>Dashboard</h1>
+            {/* as any because remix gives weird typings when using loader data */}
+            <DataTable columns={columns} data={invoices as any} />
         </div>
     )
 }
