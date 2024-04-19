@@ -36,7 +36,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <Table>
+            <Table className="max-h-80">
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>

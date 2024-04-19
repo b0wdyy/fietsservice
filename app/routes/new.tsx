@@ -1,17 +1,20 @@
 import { InvoiceForm } from '@/components/main/invoice-form'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { uploadImage } from '@/lib/image.server'
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
+import { CheckIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import {
     ActionFunctionArgs,
+    LoaderFunctionArgs,
     UploadHandler,
     unstable_composeUploadHandlers as composeUploadHandlers,
     unstable_createMemoryUploadHandler as createMemoryUploadHandler,
     json,
     unstable_parseMultipartFormData as parseMultipartFormData,
+    redirect,
 } from '@remix-run/node'
-import { MetaFunction, useActionData } from '@remix-run/react'
+import { MetaFunction, useActionData, useLoaderData } from '@remix-run/react'
 import { prisma } from 'app/db.server'
+import { commitSession, getSession } from 'app/sessions'
 import type { UploadApiErrorResponse } from 'cloudinary'
 import { useEffect } from 'react'
 
@@ -21,12 +24,11 @@ export const meta: MetaFunction = () => {
 
 export async function action({ request }: ActionFunctionArgs) {
     try {
+        const session = await getSession(request.headers.get('Cookie'))
         const uploadHandler: UploadHandler = composeUploadHandlers(async ({ name, data }) => {
             if (name !== 'img') {
                 return undefined
             }
-
-            console.log({ name, data })
 
             const uploadedImage = await uploadImage(data)
 
@@ -34,7 +36,6 @@ export async function action({ request }: ActionFunctionArgs) {
         }, createMemoryUploadHandler())
 
         const formData = await parseMultipartFormData(request, uploadHandler)
-        console.log(Object.fromEntries(formData))
         const imgSrc = formData.get('img')
 
         await prisma.invoice.create({
@@ -51,8 +52,13 @@ export async function action({ request }: ActionFunctionArgs) {
                 image: imgSrc as string,
             },
         })
+        session.flash('invoiceSuccess', 'Factuur goed aangemaakt')
 
-        return null
+        return redirect(new URL(request.url).pathname, {
+            headers: {
+                'Set-Cookie': await commitSession(session)
+            }
+        })
     } catch (e) {
         if (e && typeof e === 'object' && 'http_code' in e) {
             const error = e as UploadApiErrorResponse
@@ -64,8 +70,22 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 }
 
+export async function loader({ request }: LoaderFunctionArgs) {
+    const session = await getSession(request.headers.get('Cookie'))
+    const message = session.get('invoiceSuccess') || null
+
+    return json({
+        message
+    }, {
+        headers: {
+            'Set-Cookie': await commitSession(session)
+        }
+    })
+}
+
 export default function New() {
     const data = useActionData<typeof action>()
+    const { message } = useLoaderData<typeof loader>()
 
     useEffect(() => {
         if (data?.error) {
@@ -80,9 +100,20 @@ export default function New() {
 
                 <InvoiceForm />
 
+                {message ? <AlertSuccess message={message} /> : null}
                 {data?.error ? <AlertDestructive message={data.error} /> : null}
             </div>
         </div>
+    )
+}
+
+export function AlertSuccess({ message }: { message: string }) {
+    return (
+        <Alert>
+            <CheckIcon className="h-4 w-4" />
+            <AlertTitle>Yay!</AlertTitle>
+            <AlertDescription>{message}</AlertDescription>
+        </Alert>
     )
 }
 

@@ -1,6 +1,6 @@
 import { createCookieSessionStorage, redirect } from '@remix-run/node'
 
-const { getSession, commitSession, destroySession } = createCookieSessionStorage({
+export const { getSession, commitSession, destroySession } = createCookieSessionStorage({
     cookie: {
         name: '__session',
         secrets: [process.env.SESSION_SECRET!],
@@ -21,10 +21,9 @@ export async function requireUserId(
 
     if (!userId || typeof userId !== 'string') {
         const searchParams = new URLSearchParams([['redirectTo', redirectTo]])
+
         throw redirect(`/login?${searchParams}`)
     }
 
     return userId
 }
-
-export { getSession, commitSession, destroySession }

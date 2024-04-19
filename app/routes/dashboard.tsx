@@ -7,7 +7,7 @@ import { columns } from '@/components/main/table/columns'
 import { Wrapper } from '@/components/ui/wrapper'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    requireUserId(request, '/')
+    await requireUserId(request, '/')
 
     const invoices = await getInvoices()
 
@@ -15,6 +15,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         invoices
     })
 }
+
 export default function Dashboard() {
     const { invoices } = useLoaderData<typeof loader>()
 
