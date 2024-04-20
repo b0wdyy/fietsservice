@@ -17,7 +17,7 @@ export const columns: ColumnDef<Invoice>[] = [
         header: "Merk"
     },
     {
-        accessorKey: "type",
+        accessorKey: "bikeType.name",
         header: "Type"
     },
     {

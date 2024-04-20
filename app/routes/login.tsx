@@ -51,7 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     session.set('userId', user.id)
 
-    return redirect('/dashboard', {
+    return redirect('/', {
         headers: {
             'Set-Cookie': await commitSession(session),
         },

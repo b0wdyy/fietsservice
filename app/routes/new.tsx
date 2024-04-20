@@ -1,6 +1,7 @@
 import { InvoiceForm } from '@/components/main/invoice-form'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { uploadImage } from '@/lib/image.server'
+import { BikeType } from '@prisma/client'
 import { CheckIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import {
     ActionFunctionArgs,
@@ -43,13 +44,13 @@ export async function action({ request }: ActionFunctionArgs) {
                 amount: Number(formData.get('amount')),
                 deposit: Number(formData.get('deposit')),
                 brand: formData.get('brand') as string,
-                type: formData.get('type') as string,
                 dateOfPurchase: new Date(formData.get('dateOfPurchase') as string),
                 purchaserName: formData.get('purchaserName') as string,
                 extraAgreements: formData.get('extraAgreements') as string,
                 invoiceNumber: formData.get('invoiceNumber') as string,
                 email: formData.get('email') as string,
                 image: imgSrc as string,
+                bikeTypeId: formData.get('bikeTypeId') as string,
             },
         })
         session.flash('invoiceSuccess', 'Factuur goed aangemaakt')
@@ -71,11 +72,13 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
+    const bikeTypes = await prisma.bikeType.findMany()
     const session = await getSession(request.headers.get('Cookie'))
     const message = session.get('invoiceSuccess') || null
 
     return json({
-        message
+        message,
+        bikeTypes
     }, {
         headers: {
             'Set-Cookie': await commitSession(session)
@@ -85,7 +88,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function New() {
     const data = useActionData<typeof action>()
-    const { message } = useLoaderData<typeof loader>()
+    const { message, bikeTypes } = useLoaderData<typeof loader>()
 
     useEffect(() => {
         if (data?.error) {
@@ -98,7 +101,7 @@ export default function New() {
             <div className="w-3/4 md:w-[60%]">
                 <h1 className="mb-4 text-4xl font-bold">Nieuw factuur</h1>
 
-                <InvoiceForm />
+                <InvoiceForm bikeTypes={bikeTypes as unknown as BikeType[]} />
 
                 {message ? <AlertSuccess message={message} /> : null}
                 {data?.error ? <AlertDestructive message={data.error} /> : null}

@@ -21,17 +21,14 @@ import {
     SelectValue,
 } from '../ui/select'
 import { Textarea } from '../ui/textarea'
+import { BikeType } from '@prisma/client'
 
-export const InvoiceForm = () => {
+type InvoiceFormProps = {
+    bikeTypes: BikeType[]
+}
+
+export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
     const submit = useSubmit()
-    const typeValues = [
-        'Elektrische fiets',
-        'Stadsfiets',
-        'Koersfiets',
-        'Mountainbike',
-        'Plooifiets',
-        'Andere',
-    ]
     const form = useForm<z.infer<typeof invoiceSchema>>({
         resolver: zodResolver(invoiceSchema),
         defaultValues: {
@@ -127,9 +124,9 @@ export const InvoiceForm = () => {
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>Type</SelectLabel>
-                                            {typeValues.map((value) => (
-                                                <SelectItem key={value} value={value}>
-                                                    {value}
+                                            {bikeTypes.map((value) => (
+                                                <SelectItem key={value.id} value={value.id}>
+                                                    {value.name}
                                                 </SelectItem>
                                             ))}
                                         </SelectGroup>

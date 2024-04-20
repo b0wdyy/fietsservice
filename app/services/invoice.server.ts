@@ -3,7 +3,11 @@ import { prisma } from '../db.server'
 export async function getInvoices() {
     return prisma.invoice.findMany({
         select: {
-            type: true,
+            bikeType: {
+                select: {
+                    name: true
+                }
+            },
             brand: true,
             email: true,
             amount: true,
@@ -19,7 +23,11 @@ export async function getInvoice(id: string) {
             id
         },
         select: {
-            type: true,
+            bikeType: {
+                select: {
+                    name: true
+                }
+            },
             brand: true,
             email: true,
             amount: true,

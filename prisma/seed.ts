@@ -4,17 +4,40 @@ import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient()
 
 async function main() {
-    for (let i = 0; i < 100; i++) {
+    await createBikeType()
+    for (let i = 0; i < 10; i++) {
         await createInvoice()
     }
 }
 
+async function createBikeType() {
+    const types = [
+        'Elektrische fiets',
+        'Stadsfiets',
+        'Koersfiets',
+        'Mountainbike',
+        'Plooifiets',
+        'Andere',
+    ]
+
+    for (const bikeType of types) {
+        await prisma.bikeType.create({
+            data: {
+                name: bikeType
+            }
+        })
+    }
+
+}
+
 async function createInvoice() {
+    const bikeTypes = await prisma.bikeType.findMany()
+    const randomBikeType = faker.helpers.arrayElement(bikeTypes)
+
     await prisma.invoice.create({
         data: {
             purchaserName: faker.person.fullName(),
             amount: Number(faker.finance.amount()),
-            type: faker.helpers.arrayElement(['ELECTRIC', 'RACE', 'NORMAL']),
             brand: faker.vehicle.manufacturer(),
             email: faker.internet.email(),
             deposit: Number(faker.finance.amount()),
@@ -22,6 +45,7 @@ async function createInvoice() {
             dateOfPurchase: faker.date.recent(),
             extraAgreements: faker.lorem.sentence(),
             image: faker.image.url(),
+            bikeTypeId: randomBikeType.id
         },
     })
 }
