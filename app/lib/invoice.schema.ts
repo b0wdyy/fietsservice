@@ -10,5 +10,5 @@ export const invoiceSchema = z.object({
     extraAgreements: z.string().optional(),
     invoiceNumber: z.string(),
     email: z.string().email(),
-    img: z.string(),
+    img: z.instanceof(File),
 })

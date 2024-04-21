@@ -11,7 +11,6 @@ export async function uploadImage(data: AsyncIterable<Uint8Array>) {
     const uploadPromise = new Promise<UploadApiResponse | undefined>((resolve, reject) => {
         const uploadStream = cloudinary.v2.uploader.upload_stream(
             {
-                resource_type: 'auto',
                 folder: 'stafke_jansen',
             },
             (error, result) => {

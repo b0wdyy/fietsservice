@@ -41,7 +41,7 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
             extraAgreements: '',
             invoiceNumber: '',
             email: '',
-            img: '',
+            img: undefined,
         },
     })
 
@@ -49,7 +49,12 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
         const formData = new FormData()
         for (const key in values) {
             if (Object.prototype.hasOwnProperty.call(values, key)) {
-                formData.append(key, String(values[key as keyof typeof values]))
+                const value = values[key as keyof typeof values]
+                if (key === 'img' && value) {
+                    formData.append(key, value as File)
+                    continue
+                }
+                formData.append(key, String(value))
             }
         }
         submit(formData, {
@@ -114,7 +119,7 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
                         render={({ field }) => (
                             <FormItem className="flex-1">
                                 <FormLabel>Type</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select onValueChange={field.onChange} {...field}>
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Selecteer een type" />
@@ -207,11 +212,19 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
                 <FormField
                     control={form.control}
                     name="img"
-                    render={({ field }) => (
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    render={({ field: { onChange, value, ...fieldProps } }) => (
                         <FormItem>
                             <FormLabel>Foto</FormLabel>
                             <FormControl>
-                                <Input type="file" {...field} />
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    {...fieldProps}
+                                    onChange={(e) => {
+                                        onChange(e.target.files?.[0])
+                                    }}
+                                />
                             </FormControl>
                         </FormItem>
                     )}

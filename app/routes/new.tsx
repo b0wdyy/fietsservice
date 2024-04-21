@@ -28,12 +28,12 @@ export const meta: MetaFunction = () => {
 export async function action({ request }: ActionFunctionArgs) {
     try {
         const session = await getSession(request.headers.get('Cookie'))
-        const uploadHandler: UploadHandler = composeUploadHandlers(async ({ name, data }) => {
-            if (name !== 'img') {
+        const uploadHandler: UploadHandler = composeUploadHandlers(async (handler) => {
+            if (handler.name !== 'img') {
                 return undefined
             }
 
-            const uploadedImage = await uploadImage(data)
+            const uploadedImage = await uploadImage(handler.data)
 
             return uploadedImage?.secure_url
         }, createMemoryUploadHandler())
@@ -76,7 +76,6 @@ export async function action({ request }: ActionFunctionArgs) {
             return json({ error: error.message }, { status: error.http_code })
         }
 
-        console.log(e)
         return json({ error: 'An error occurred' }, { status: 500 })
     }
 }
