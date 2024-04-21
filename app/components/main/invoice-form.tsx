@@ -35,13 +35,13 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
             amount: '0',
             deposit: '0',
             brand: '',
-            type: '',
+            bikeTypeId: '',
             dateOfPurchase: new Date(),
             purchaserName: '',
             extraAgreements: '',
             invoiceNumber: '',
             email: '',
-            img: undefined,
+            img: '',
         },
     })
 
@@ -110,7 +110,7 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
 
                     <FormField
                         control={form.control}
-                        name="type"
+                        name="bikeTypeId"
                         render={({ field }) => (
                             <FormItem className="flex-1">
                                 <FormLabel>Type</FormLabel>

@@ -1,6 +1,8 @@
 import { InvoiceForm } from '@/components/main/invoice-form'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { sgMail } from '@/lib/email.server'
 import { uploadImage } from '@/lib/image.server'
+import { createInvoice } from '@/services/invoice.server'
 import { BikeType } from '@prisma/client'
 import { CheckIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import {
@@ -39,26 +41,33 @@ export async function action({ request }: ActionFunctionArgs) {
         const formData = await parseMultipartFormData(request, uploadHandler)
         const imgSrc = formData.get('img')
 
-        await prisma.invoice.create({
-            data: {
-                amount: Number(formData.get('amount')),
-                deposit: Number(formData.get('deposit')),
-                brand: formData.get('brand') as string,
-                dateOfPurchase: new Date(formData.get('dateOfPurchase') as string),
-                purchaserName: formData.get('purchaserName') as string,
-                extraAgreements: formData.get('extraAgreements') as string,
-                invoiceNumber: formData.get('invoiceNumber') as string,
-                email: formData.get('email') as string,
-                image: imgSrc as string,
-                bikeTypeId: formData.get('bikeTypeId') as string,
-            },
+        const data = {
+            amount: Number(formData.get('amount')),
+            deposit: Number(formData.get('deposit')),
+            brand: formData.get('brand') as string,
+            dateOfPurchase: new Date(formData.get('dateOfPurchase') as string),
+            purchaserName: formData.get('purchaserName') as string,
+            extraAgreements: formData.get('extraAgreements') as string,
+            invoiceNumber: formData.get('invoiceNumber') as string,
+            email: formData.get('email') as string,
+            image: imgSrc as string,
+            bikeTypeId: formData.get('bikeTypeId') as string,
+        }
+
+        await createInvoice(data)
+        sgMail.send({
+            to: 'bowdyvandael@gmail.com',
+            from: 'noreply@fietsservice.vndl.dev',
+            subject: 'Sending with SendGrid is Fun',
+            text: 'and easy to do anywhere, even with Node.js',
+            html: '<strong>and easy to do anywhere, even with Node.js</strong>',
         })
         session.flash('invoiceSuccess', 'Factuur goed aangemaakt')
 
         return redirect(new URL(request.url).pathname, {
             headers: {
-                'Set-Cookie': await commitSession(session)
-            }
+                'Set-Cookie': await commitSession(session),
+            },
         })
     } catch (e) {
         if (e && typeof e === 'object' && 'http_code' in e) {
@@ -67,6 +76,7 @@ export async function action({ request }: ActionFunctionArgs) {
             return json({ error: error.message }, { status: error.http_code })
         }
 
+        console.log(e)
         return json({ error: 'An error occurred' }, { status: 500 })
     }
 }
@@ -76,14 +86,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const session = await getSession(request.headers.get('Cookie'))
     const message = session.get('invoiceSuccess') || null
 
-    return json({
-        message,
-        bikeTypes
-    }, {
-        headers: {
-            'Set-Cookie': await commitSession(session)
+    return json(
+        {
+            message,
+            bikeTypes,
+        },
+        {
+            headers: {
+                'Set-Cookie': await commitSession(session),
+            },
         }
-    })
+    )
 }
 
 export default function New() {
