@@ -24,7 +24,7 @@ import { Textarea } from '../ui/textarea'
 import { BikeType } from '@prisma/client'
 
 type InvoiceFormProps = {
-    bikeTypes: BikeType[]
+    bikeTypes: BikeType[] | undefined
 }
 
 export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
@@ -129,7 +129,7 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>Type</SelectLabel>
-                                            {bikeTypes.map((value) => (
+                                            {bikeTypes?.map((value) => (
                                                 <SelectItem key={value.id} value={value.id}>
                                                     {value.name}
                                                 </SelectItem>

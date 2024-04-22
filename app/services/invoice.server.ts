@@ -14,6 +14,9 @@ export async function createInvoice(data: {
 }) {
     return prisma.invoice.create({
         data,
+        include: {
+            bikeType: true,
+        },
     })
 }
 

@@ -10,13 +10,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Dashboard() {
-
     return (
         <main>
-            <h1 className='text-3xl font-bold mb-4 mt-8 ml-48'>Dashboard</h1>
+            <h1 className="mb-4 ml-56 mt-8 text-3xl font-bold">Dashboard</h1>
             <Navigation />
 
-            <div className='ml-44'>
+            <div className="ml-56 mr-12">
                 <Outlet />
             </div>
         </main>

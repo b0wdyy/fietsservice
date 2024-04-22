@@ -19,10 +19,24 @@ import { MetaFunction, useActionData, useLoaderData } from '@remix-run/react'
 import { prisma } from 'app/db.server'
 import { commitSession, getSession } from 'app/sessions'
 import type { UploadApiErrorResponse } from 'cloudinary'
-import { useEffect } from 'react'
+import { format } from 'date-fns'
 
 export const meta: MetaFunction = () => {
     return [{ title: 'New invoice' }]
+}
+
+async function withRetry<T>(cb: () => Promise<T>, retries: number = 3): Promise<T | undefined> {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await cb()
+        } catch (e) {
+            console.error(`Attempt ${i + 1} failed. Retrying...`)
+            if (i === retries - 1) {
+                throw e
+            }
+        }
+    }
+    return undefined
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -54,13 +68,20 @@ export async function action({ request }: ActionFunctionArgs) {
             bikeTypeId: formData.get('bikeTypeId') as string,
         }
 
-        await createInvoice(data)
+        const invoice = await createInvoice(data)
         sgMail.send({
-            to: 'bowdyvandael@gmail.com',
+            to: `${invoice.email}`,
             from: 'noreply@fietsservice.vndl.dev',
-            subject: 'Sending with SendGrid is Fun',
-            text: 'and easy to do anywhere, even with Node.js',
-            html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+            subject: 'Bedankt voor uw aankoop!',
+            html: `
+                <h1>Verkoopovereenkomst ${invoice.brand}</h1>
+                <p style="margin-bottom: 0.5rem;">Hierbij verklaar ik, ondergetekende Staf Jansen, mijn e-bike van het merk ${invoice.brand} type {type} verkocht te hebben aan ${invoice.purchaserName} op ${format(invoice.dateOfPurchase, 'dd/MM/yyyy')} voor een bedrag van €${invoice.amount} (voorschot €${invoice.deposit}).</p>
+                <span style="display: block;">Extra afspraken:</span>
+                <p>${invoice?.extraAgreements}</p>
+                <p>Foto:</p>
+                <img style="max-width: 400px;" src='${invoice.image}' alt='${invoice.brand}-${invoice.bikeType.name}' />
+                <p class="margin-top: 10rem; font-size: 8px;">Dit betreft een particuliere verkoop, zonder extra garantie. De fiets wordt verkocht in de staat waarin het zich op dit moment bevindt. Kan niet teruggenomen worden tenzij anders overeengekomen en boven vermeld. Beide partijen zijn akkoord met deze voorwaarden.</p>
+            `,
         })
         session.flash('invoiceSuccess', 'Factuur goed aangemaakt')
 
@@ -81,7 +102,8 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    const bikeTypes = await prisma.bikeType.findMany()
+    // with retry is used to handle the case where the database connection is lost
+    const bikeTypes = await withRetry(() => prisma.bikeType.findMany())
     const session = await getSession(request.headers.get('Cookie'))
     const message = session.get('invoiceSuccess') || null
 
@@ -101,12 +123,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function New() {
     const data = useActionData<typeof action>()
     const { message, bikeTypes } = useLoaderData<typeof loader>()
-
-    useEffect(() => {
-        if (data?.error) {
-            console.error(data.error)
-        }
-    }, [data?.error])
 
     return (
         <div className="grid h-screen w-screen place-items-center">
