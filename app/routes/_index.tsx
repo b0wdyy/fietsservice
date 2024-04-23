@@ -4,8 +4,8 @@ import { Link } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "New Remix App" },
-        { name: "description", content: "Welcome to Remix!" },
+        { title: "Fietsservice Lommel" },
+        { name: "description", content: "Genereer je factuur" },
     ];
 };
 
@@ -13,7 +13,7 @@ export default function Index() {
     return (
         <div className="w-screen h-screen grid place-items-center">
             <Button asChild>
-                <Link to="/new">Generate new invoice</Link>
+                <Link to="/new">Factuur maken</Link>
             </Button>
         </div>
     );
