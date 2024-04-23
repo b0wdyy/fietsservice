@@ -1,5 +1,7 @@
+import SignatureCanvas from 'react-signature-canvas'
 import { invoiceSchema } from '@/lib/invoice.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { BikeType } from '@prisma/client'
 import { CalendarIcon } from '@radix-ui/react-icons'
 import { useSubmit } from '@remix-run/react'
 import { format } from 'date-fns'
@@ -21,7 +23,6 @@ import {
     SelectValue,
 } from '../ui/select'
 import { Textarea } from '../ui/textarea'
-import { BikeType } from '@prisma/client'
 
 type InvoiceFormProps = {
     bikeTypes: BikeType[] | undefined
@@ -32,15 +33,15 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
     const form = useForm<z.infer<typeof invoiceSchema>>({
         resolver: zodResolver(invoiceSchema),
         defaultValues: {
-            amount: '0',
-            deposit: '0',
+            amount: 0,
+            deposit: 0,
             brand: '',
             bikeTypeId: '',
             dateOfPurchase: new Date(),
             purchaserName: '',
             extraAgreements: '',
-            invoiceNumber: '',
             email: '',
+            signature: '',
             img: undefined,
         },
     })
@@ -249,12 +250,24 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
                     />
                 </div>
 
+                <FormField
+                    control={form.control}
+                    name="signature"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Handtekening koper</FormLabel>
+
+                            {/* <SignatureCanvas /> */}
+                        </FormItem>
+                    )}
+                />
+
                 <Button
                     className="w-full md:w-auto"
                     type="submit"
                     disabled={form.formState.isSubmitting || !form.formState.isValid}
                 >
-                    Genereer
+                    {form.formState.isSubmitting ? 'Aan het verwerken...' : 'Genereer'}
                 </Button>
             </form>
         </Form>

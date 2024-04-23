@@ -8,7 +8,6 @@ import { useLoaderData } from '@remix-run/react'
 
 export async function loader() {
     const invoices = await getInvoices()
-    console.log(invoices)
 
     return json({
         invoices,

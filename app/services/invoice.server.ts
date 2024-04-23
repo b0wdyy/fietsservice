@@ -10,6 +10,7 @@ export async function createInvoice(data: {
     dateOfPurchase: Date
     invoiceNumber: string
     image: string
+    signature: string
     extraAgreements: string
 }) {
     return prisma.invoice.create({

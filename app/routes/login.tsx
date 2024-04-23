@@ -10,9 +10,19 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { verifyUser } from '@/services/user.server'
-import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/node'
+import {
+    ActionFunctionArgs,
+    LoaderFunctionArgs,
+    MetaFunction,
+    json,
+    redirect,
+} from '@remix-run/node'
 import { Form, useLoaderData } from '@remix-run/react'
 import { commitSession, getSession } from '../sessions'
+
+export const meta: MetaFunction = () => {
+    return [{ title: 'Inloggen' }]
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const session = await getSession(request.headers.get('Cookie'))

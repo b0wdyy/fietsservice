@@ -22,7 +22,7 @@ import type { UploadApiErrorResponse } from 'cloudinary'
 import { format } from 'date-fns'
 
 export const meta: MetaFunction = () => {
-    return [{ title: 'New invoice' }]
+    return [{ title: 'Nieuwe factuur aanmaken' }]
 }
 
 async function withRetry<T>(cb: () => Promise<T>, retries: number = 3): Promise<T | undefined> {
@@ -64,6 +64,7 @@ export async function action({ request }: ActionFunctionArgs) {
             extraAgreements: formData.get('extraAgreements') as string,
             invoiceNumber: formData.get('invoiceNumber') as string,
             email: formData.get('email') as string,
+            signature: '',
             image: imgSrc as string,
             bikeTypeId: formData.get('bikeTypeId') as string,
         }

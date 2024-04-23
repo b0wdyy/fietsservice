@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker'
 
 const prisma = new PrismaClient()
 
@@ -23,11 +23,10 @@ async function createBikeType() {
     for (const bikeType of types) {
         await prisma.bikeType.create({
             data: {
-                name: bikeType
-            }
+                name: bikeType,
+            },
         })
     }
-
 }
 
 async function createInvoice() {
@@ -45,7 +44,8 @@ async function createInvoice() {
             dateOfPurchase: faker.date.recent(),
             extraAgreements: faker.lorem.sentence(),
             image: faker.image.url(),
-            bikeTypeId: randomBikeType.id
+            signature: faker.image.dataUri(),
+            bikeTypeId: randomBikeType.id,
         },
     })
 }
