@@ -13,8 +13,18 @@ export async function createInvoice(data: {
     signature: string
     extraAgreements: string
 }) {
+    const { bikeTypeId, ...withoutBikeTypeId } = data
+
     return prisma.invoice.create({
-        data,
+        data: {
+            ...withoutBikeTypeId,
+            invoiceNumber: generateInvoiceNumber(),
+            bikeType: {
+                connect: {
+                    id: bikeTypeId,
+                },
+            },
+        },
         include: {
             bikeType: true,
         },
@@ -59,4 +69,17 @@ export async function getInvoice(id: string) {
             image: true,
         },
     })
+}
+
+function generateInvoiceNumber() {
+    const date = new Date()
+    const dateString = `
+        ${date.getFullYear()}${(date.getMonth() + 1).toString().padStart(2, '0')}${date
+            .getDate()
+            .toString()
+            .padStart(2, '0')}
+        `
+    const uniqueId = Math.random().toString(36).substring(2, 9)
+
+    return `FS${dateString}${uniqueId.toUpperCase()}`
 }
