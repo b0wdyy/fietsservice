@@ -23,7 +23,6 @@ import {
     SelectValue,
 } from '../ui/select'
 import { Textarea } from '../ui/textarea'
-import { useEffect } from 'react'
 
 type InvoiceFormProps = {
     bikeTypes: BikeType[] | undefined
@@ -65,10 +64,6 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
             action: '/new',
         })
     }
-
-    useEffect(() => {
-        console.log(form.formState.errors)
-    }, [form.formState])
 
     return (
         <Form {...form}>

@@ -81,8 +81,6 @@ export async function action({ request }: ActionFunctionArgs) {
                 <p>${invoice?.extraAgreements}</p>
                 <p>Foto:</p>
                 <img style="max-width: 400px;" src='${invoice.image}' alt='${invoice.brand}-${invoice.bikeType.name}' />
-                <p>Handtekening koper:</p>
-                <img style="max-width: 400px;" src='${invoice.signature}' alt='handtekening' />
                 <p class="margin-top: 10rem; font-size: 8px; font-style: bold;">Dit betreft een particuliere verkoop, zonder extra garantie. De fiets wordt verkocht in de staat waarin het zich op dit moment bevindt. Kan niet teruggenomen worden tenzij anders overeengekomen en boven vermeld. Beide partijen zijn akkoord met deze voorwaarden.</p>
             `,
         })

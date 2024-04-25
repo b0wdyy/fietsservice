@@ -26,7 +26,7 @@ export const SignatureArea: React.FC<SignatureAreaProps> = ({ onChange }) => {
         const signaturePad = new SignaturePad(ref.current)
 
         signaturePad.addEventListener('endStroke', () => {
-            onChange(signaturePad.toDataURL())
+            onChange(signaturePad.toSVG())
         })
         window.addEventListener('resize', () => {
             resizeCanvas(signaturePad)
