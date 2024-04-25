@@ -1,3 +1,5 @@
+import { AlertDestructive } from '@/components/main/alert/descructive'
+import { AlertSuccess } from '@/components/main/alert/success'
 import { InvoiceForm } from '@/components/main/invoice-form'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { sgMail } from '@/lib/email.server'
@@ -76,7 +78,7 @@ export async function action({ request }: ActionFunctionArgs) {
             subject: 'Bedankt voor uw aankoop!',
             html: `
                 <h1>Verkoopovereenkomst ${invoice.brand}</h1>
-                <p style="margin-bottom: 0.5rem;">Hierbij verklaar ik, ondergetekende Staf Jansen, mijn e-bike van het merk ${invoice.brand} type {type} verkocht te hebben aan ${invoice.purchaserName} op ${format(invoice.dateOfPurchase, 'dd/MM/yyyy')} voor een bedrag van €${invoice.amount} (voorschot €${invoice.deposit}).</p>
+                <p style="margin-bottom: 0.5rem;">Hierbij verklaar ik, ondergetekende Staf Jansen, mijn e-bike van het merk ${invoice.brand} type ${invoice.bikeType.name.toLowerCase()} verkocht te hebben aan ${invoice.purchaserName} op ${format(invoice.dateOfPurchase, 'dd/MM/yyyy')} voor een bedrag van €${invoice.amount} (voorschot €${invoice.deposit}).</p>
                 <span style="display: block;">Extra afspraken:</span>
                 <p>${invoice?.extraAgreements}</p>
                 <p>Foto:</p>
@@ -84,7 +86,10 @@ export async function action({ request }: ActionFunctionArgs) {
                 <p class="margin-top: 10rem; font-size: 8px; font-style: bold;">Dit betreft een particuliere verkoop, zonder extra garantie. De fiets wordt verkocht in de staat waarin het zich op dit moment bevindt. Kan niet teruggenomen worden tenzij anders overeengekomen en boven vermeld. Beide partijen zijn akkoord met deze voorwaarden.</p>
             `,
         })
-        session.flash('invoiceSuccess', 'Factuur goed aangemaakt')
+        session.flash(
+            'invoiceSuccess',
+            'Factuur goed aangemaakt! Je krijgt een bevestiging per mail.'
+        )
 
         return redirect(new URL(request.url).pathname, {
             headers: {
@@ -126,8 +131,8 @@ export default function New() {
     const { message, bikeTypes } = useLoaderData<typeof loader>()
 
     return (
-        <div className="grid h-screen w-screen place-items-center">
-            <div className="w-3/4 md:w-[60%]">
+        <div className="grid h-screen w-screen place-items-center overflow-x-hidden">
+            <div className="w-3/4 py-8 md:w-[60%]">
                 <h1 className="mb-4 text-4xl font-bold">Nieuw factuur</h1>
 
                 <InvoiceForm bikeTypes={bikeTypes as unknown as BikeType[]} />
@@ -136,25 +141,5 @@ export default function New() {
                 {data?.error ? <AlertDestructive message={data.error} /> : null}
             </div>
         </div>
-    )
-}
-
-export function AlertSuccess({ message }: { message: string }) {
-    return (
-        <Alert>
-            <CheckIcon className="h-4 w-4" />
-            <AlertTitle>Yay!</AlertTitle>
-            <AlertDescription>{message}</AlertDescription>
-        </Alert>
-    )
-}
-
-export function AlertDestructive({ message }: { message: string }) {
-    return (
-        <Alert variant="destructive">
-            <ExclamationTriangleIcon className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{message}</AlertDescription>
-        </Alert>
     )
 }

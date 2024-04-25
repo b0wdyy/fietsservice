@@ -3,7 +3,7 @@ import { invoiceSchema } from '@/lib/invoice.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { BikeType } from '@prisma/client'
 import { CalendarIcon } from '@radix-ui/react-icons'
-import { useSubmit } from '@remix-run/react'
+import { useNavigation, useSubmit } from '@remix-run/react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -45,6 +45,8 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
             img: undefined,
         },
     })
+    const navigation = useNavigation()
+    const isSubmitting = navigation.state === 'submitting'
 
     function onSubmit(values: z.infer<typeof invoiceSchema>) {
         const formData = new FormData()
@@ -265,9 +267,9 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
                 <Button
                     className="w-full md:w-auto"
                     type="submit"
-                    disabled={form.formState.isSubmitting || !form.formState.isValid}
+                    disabled={isSubmitting || !form.formState.isValid}
                 >
-                    {form.formState.isSubmitting ? 'Aan het verwerken...' : 'Genereer'}
+                    {isSubmitting ? 'Aan het verwerken...' : 'Genereer'}
                 </Button>
             </form>
         </Form>

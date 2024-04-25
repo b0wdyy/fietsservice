@@ -4,7 +4,7 @@ import { NavLink } from '@remix-run/react'
 
 export function Navigation() {
     return (
-        <div className="fixed top-0 flex h-screen w-48 flex-col gap-8 pt-8 shadow-md shadow-zinc-400">
+        <div className="fixed top-0 hidden h-screen w-48 flex-col gap-8 pt-8 shadow-md shadow-zinc-400 md:flex">
             <NavigationItem href="invoices" text="Facturen" icon={<DashboardIcon />} />
             <NavigationItem href="config" text="Configuratie" icon={<GearIcon />} />
         </div>

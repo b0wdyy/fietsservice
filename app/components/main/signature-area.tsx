@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import SignaturePad from 'signature_pad'
 
 type SignatureAreaProps = {
@@ -24,7 +24,7 @@ export const SignatureArea: React.FC<SignatureAreaProps> = ({ onChange }) => {
         }
 
         const signaturePad = new SignaturePad(ref.current)
-
+        resizeCanvas(signaturePad)
         signaturePad.addEventListener('endStroke', () => {
             onChange(signaturePad.toSVG())
         })
@@ -42,8 +42,8 @@ export const SignatureArea: React.FC<SignatureAreaProps> = ({ onChange }) => {
     }, [])
 
     return (
-        <div className="w-60 rounded-md border border-zinc-500">
-            <canvas ref={ref} className="w-full" />
+        <div className="h-40 w-60 rounded-md border border-zinc-500">
+            <canvas ref={ref} className="h-full w-full" />
         </div>
     )
 }

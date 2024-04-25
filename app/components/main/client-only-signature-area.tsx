@@ -1,4 +1,5 @@
 import { SignatureArea } from '@/components/main/signature-area'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ClientOnly } from 'remix-utils/client-only'
 
 type SignatureAreaProps = {
@@ -6,5 +7,9 @@ type SignatureAreaProps = {
 }
 
 export const ClientOnlySignatureArea: React.FC<SignatureAreaProps> = ({ onChange }) => {
-    return <ClientOnly>{() => <SignatureArea onChange={onChange} />}</ClientOnly>
+    return (
+        <ClientOnly fallback={<Skeleton className="h-40 w-60 rounded-md" />}>
+            {() => <SignatureArea onChange={onChange} />}
+        </ClientOnly>
+    )
 }

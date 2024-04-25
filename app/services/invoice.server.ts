@@ -8,7 +8,6 @@ export async function createInvoice(data: {
     deposit: number
     purchaserName: string
     dateOfPurchase: Date
-    invoiceNumber: string
     image: string
     signature: string
     extraAgreements: string
