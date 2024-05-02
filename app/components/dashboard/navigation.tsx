@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { DashboardIcon, GearIcon } from '@radix-ui/react-icons'
+import { DashboardIcon, GearIcon, PersonIcon } from '@radix-ui/react-icons'
 import { NavLink } from '@remix-run/react'
 
 export function Navigation() {
@@ -7,6 +7,7 @@ export function Navigation() {
         <div className="fixed top-0 hidden h-screen w-48 flex-col gap-8 pt-8 shadow-md shadow-zinc-400 md:flex">
             <NavigationItem href="invoices" text="Facturen" icon={<DashboardIcon />} />
             <NavigationItem href="config" text="Configuratie" icon={<GearIcon />} />
+            <NavigationItem href="users" text="Gebruikers" icon={<PersonIcon />} />
         </div>
     )
 }

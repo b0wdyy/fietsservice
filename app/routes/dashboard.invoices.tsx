@@ -1,4 +1,4 @@
-import { columns } from '@/components/main/table/columns'
+import { invoiceColumns } from '@/components/main/table/columns'
 import { DataTable } from '@/components/main/table/data-table'
 import { Wrapper } from '@/components/ui/wrapper'
 import { getInvoices } from '@/services/invoice.server'
@@ -20,7 +20,7 @@ export default function Invoices() {
     return (
         <Wrapper>
             {/* as any because remix gives weird typings when using loader data */}
-            <DataTable columns={columns} data={invoices as unknown as Invoice[]} />
+            <DataTable columns={invoiceColumns} data={invoices as unknown as Invoice[]} />
         </Wrapper>
     )
 }
