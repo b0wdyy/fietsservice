@@ -14,7 +14,7 @@ import { useIsSubmitting } from '@/hooks/useIsSubmitting'
 import { Form } from '@remix-run/react'
 import { useRef } from 'react'
 
-export function CreateUser() {
+export const CreateUser = () => {
     const dialogClose = useRef<HTMLButtonElement>(null)
     const isSubmitting = useIsSubmitting()
 

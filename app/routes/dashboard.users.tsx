@@ -1,15 +1,15 @@
 import { CreateUser } from '@/components/dashboard/create-user'
-import { userColumns } from '@/components/main/table/columns'
 import { DataTable } from '@/components/main/table/data-table'
 import { Separator } from '@/components/ui/separator'
-import { useIsSubmitting } from '@/hooks/useIsSubmitting'
+import { Wrapper } from '@/components/ui/wrapper'
+import { userColumns } from '@/lib/columns'
 import { createUser, getUsers } from '@/services/user.server'
-import { ActionFunction, LoaderFunction, json, redirect } from '@remix-run/node'
+import { User } from '@prisma/client'
+import { ActionFunction, json, redirect } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { requireUserId } from 'app/sessions'
-import { useTransition } from 'react'
 
-export const loader: LoaderFunction = async () => {
+export const loader = async () => {
     const users = await getUsers()
 
     return json({
@@ -36,14 +36,18 @@ export default function Users() {
         <div>
             <h2 className="text-2xl font-bold">Gebruikers</h2>
             <Separator className="my-2" />
-            <p className="text-zinc-400">
+            <p className="mt-4 text-zinc-400">
                 Deze gebruikers hebben toegang tot het dashboard. Ze kunnen bijvoorbeeld fiets types
                 toevoegen of alle orders bekijken.
             </p>
 
-            <div className="mt-8 max-w-4xl">
-                {users.length ? <DataTable columns={userColumns} data={users} /> : <p>no users</p>}
-            </div>
+            <Wrapper>
+                {users.length ? (
+                    <DataTable columns={userColumns} data={users as any} />
+                ) : (
+                    <p>no users</p>
+                )}
+            </Wrapper>
 
             <CreateUser />
         </div>

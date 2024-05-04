@@ -1,7 +1,21 @@
+import { BikeTypesTab } from '@/components/dashboard/config/bike-types-tab'
 import { Separator } from '@/components/ui/separator'
+import { getBikeTypes } from '@/services/bike-type.server'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@radix-ui/react-tabs'
+import { LoaderFunction, json } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+
+export const loader = async () => {
+    const bikeTypes = await getBikeTypes()
+
+    return json({
+        bikeTypes,
+    })
+}
 
 export default function DashboardConfig() {
+    const { bikeTypes } = useLoaderData<typeof loader>()
+
     return (
         <div>
             <h2 className="text-2xl font-bold">Config</h2>
@@ -30,8 +44,7 @@ export default function DashboardConfig() {
                 </TabsList>
 
                 <TabsContent value="bikeTypes">
-                    {/* Create component for biketypes */}
-                    Bike types
+                    <BikeTypesTab bikeTypes={bikeTypes as any} />
                 </TabsContent>
 
                 <TabsContent value="bikeBrands">

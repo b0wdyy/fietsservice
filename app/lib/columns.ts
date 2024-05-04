@@ -1,6 +1,4 @@
-'use client'
-
-import { Invoice, User } from '@prisma/client'
+import { BikeType, Invoice, User } from '@prisma/client'
 import { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 
@@ -44,5 +42,21 @@ export const userColumns: ColumnDef<User>[] = [
         accessorKey: 'createdAt',
         header: 'Aangemaakt op',
         accessorFn: (user) => format(new Date(user.createdAt), 'dd-MM-yyyy HH:mm'),
+    },
+]
+
+export const bikeTypeColumns: ColumnDef<BikeType>[] = [
+    {
+        accessorKey: 'id',
+        header: 'ID',
+    },
+    {
+        accessorKey: 'name',
+        header: 'Naam',
+    },
+    {
+        accessorKey: 'createdAt',
+        header: 'Aangemaakt op',
+        accessorFn: (bikeType) => format(new Date(bikeType.createdAt), 'dd-MM-yyyy HH:mm'),
     },
 ]
