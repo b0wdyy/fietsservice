@@ -3,7 +3,7 @@ import { invoiceSchema } from '@/lib/invoice.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { BikeType } from '@prisma/client'
 import { CalendarIcon } from '@radix-ui/react-icons'
-import { useNavigation, useSubmit } from '@remix-run/react'
+import { useSubmit } from '@remix-run/react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -23,6 +23,7 @@ import {
     SelectValue,
 } from '../ui/select'
 import { Textarea } from '../ui/textarea'
+import { useIsSubmitting } from '@/hooks/useIsSubmitting'
 
 type InvoiceFormProps = {
     bikeTypes: BikeType[] | undefined
@@ -31,6 +32,7 @@ type InvoiceFormProps = {
 export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
     const submit = useSubmit()
     const form = useForm<z.infer<typeof invoiceSchema>>({
+        mode: 'onChange',
         resolver: zodResolver(invoiceSchema),
         defaultValues: {
             amount: 0,
@@ -45,8 +47,7 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
             img: undefined,
         },
     })
-    const navigation = useNavigation()
-    const isSubmitting = navigation.state === 'submitting'
+    const isSubmitting = useIsSubmitting()
 
     function onSubmit(values: z.infer<typeof invoiceSchema>) {
         const formData = new FormData()
@@ -82,7 +83,12 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
                             <FormItem className="flex-1">
                                 <FormLabel>Bedrag</FormLabel>
                                 <FormControl>
-                                    <Input type="number" placeholder="0" {...field} />
+                                    <Input
+                                        type="number"
+                                        placeholder="0"
+                                        {...field}
+                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                    />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -95,7 +101,12 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
                             <FormItem className="flex-1">
                                 <FormLabel>Voorschot</FormLabel>
                                 <FormControl>
-                                    <Input type="number" placeholder="0" {...field} />
+                                    <Input
+                                        type="number"
+                                        placeholder="0"
+                                        {...field}
+                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                    />
                                 </FormControl>
                             </FormItem>
                         )}
