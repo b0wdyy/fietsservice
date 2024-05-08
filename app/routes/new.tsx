@@ -1,12 +1,10 @@
 import { AlertDestructive } from '@/components/main/alert/descructive'
 import { AlertSuccess } from '@/components/main/alert/success'
 import { InvoiceForm } from '@/components/main/invoice-form'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { sgMail } from '@/lib/email.server'
 import { uploadImage } from '@/lib/image.server'
 import { createInvoice } from '@/services/invoice.server'
 import { BikeType } from '@prisma/client'
-import { CheckIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import {
     ActionFunctionArgs,
     LoaderFunctionArgs,
@@ -18,6 +16,7 @@ import {
     redirect,
 } from '@remix-run/node'
 import { MetaFunction, useActionData, useLoaderData } from '@remix-run/react'
+import * as Sentry from '@sentry/remix'
 import { prisma } from 'app/db.server'
 import { commitSession, getSession } from 'app/sessions'
 import type { UploadApiErrorResponse } from 'cloudinary'
@@ -103,6 +102,7 @@ export async function action({ request }: ActionFunctionArgs) {
             return json({ error: error.message }, { status: error.http_code })
         }
 
+        Sentry.captureException(e)
         return json({ error: 'An error occurred' }, { status: 500 })
     }
 }
