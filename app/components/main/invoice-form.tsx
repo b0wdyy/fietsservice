@@ -83,12 +83,7 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
                             <FormItem className="flex-1">
                                 <FormLabel>Bedrag</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="number"
-                                        placeholder="0"
-                                        {...field}
-                                        onChange={(e) => field.onChange(Number(e.target.value))}
-                                    />
+                                    <Input type="number" placeholder="0" {...field} />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -101,12 +96,7 @@ export const InvoiceForm = ({ bikeTypes }: InvoiceFormProps) => {
                             <FormItem className="flex-1">
                                 <FormLabel>Voorschot</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="number"
-                                        placeholder="0"
-                                        {...field}
-                                        onChange={(e) => field.onChange(Number(e.target.value))}
-                                    />
+                                    <Input type="number" placeholder="0" {...field} />
                                 </FormControl>
                             </FormItem>
                         )}
